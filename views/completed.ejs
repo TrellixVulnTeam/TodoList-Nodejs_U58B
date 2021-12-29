@@ -1,0 +1,140 @@
+<% include ./partials/head_common%>
+
+    <body>
+        <div class="wrapper">
+            <header>Xin chào <%= user.local.name %>
+            </header>
+            <form method="post" autocomplete="off">
+                <div class="inputField">
+                    <input type="text" name="task" placeholder="Add your new todo" />
+                    <button type="submit"><i class="fas fa-plus"></i></button>
+                </div>
+            </form>
+
+            <!-- Button trigger modal -->
+
+            <ul class="todoList">
+                <!-- data are comes from local storage -->
+                <% var total=0; var uncomplete=0 ;var completed=0; for(let item=0; item < tasks.length ; item++) {
+                    if(!tasks[item].completed) { uncomplete+=1;%>
+                    <li style="display: none;">
+                        <%= tasks[item].tasks %><span class="icon" onclick="deleteTask(`<%- tasks[item]._id %>`)">
+                                <i class="fas fa-trash"></i></span>
+                    </li>
+                    <%} else {%>
+                        <li>
+                            <%= tasks[item].tasks %><span class="icon" onclick="deleteTask(`<%- tasks[item]._id %>`)">
+                                    <i class="fas fa-trash"></i></span>
+                        </li>
+                        completed+=1;} %>
+                        <%} %>
+            </ul>
+
+            <div class="footer">
+                <span>You have <%= uncomplete %><span class="pendingTasks"></span> pending
+                        tasks</span>
+                <% if(completed> 0) { %>
+                    <button type="button" class="btn btn-primary active" data-toggle="modal" data-target="#">
+                        Completed (<%= completed %>)
+                    </button>
+                    <% } %>
+                        <% if(uncomplete> 0) { %>
+                            <button type="button" class="btn btn-primary active" data-toggle="modal"
+                                data-target="#delete_all_task">
+                                Clear All
+                            </button>
+                            <% } %>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="delete_all_task" tabindex="-1" role="dialog" aria-labelledby="delete_all_taskLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="delete_all_taskLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to clear <%= uncomplete %> your tasks?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            No
+                        </button>
+                        <button type="button" class="btn btn-primary" id="delete_all">
+                            Yes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" name="delete_task"></form>
+        <form method="POST" name="set_task_completed"></form>
+        <form method="POST" name="delete_all_task"></form>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            // getting all required elements
+            const inputBox = document.querySelector(".inputField input");
+            const addBtn = document.querySelector(".inputField button");
+            const todoList = document.querySelector(".todoList");
+            const deleteAllBtn = document.querySelector(".footer button");
+            const deleteTasktoServer = document.forms["delete_task"];
+            const setTaskCompletedtoServer = document.forms["set_task_completed"];
+            const deleteAllTasktoServer = document.forms["delete_all_task"];
+            const deleteAllBtnConfirm = document.getElementById("delete_all");
+
+            $("#delete_all_task").on("show.bs.modal", function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var recipient = button.data("modal"); // Extract info from data-* attributes
+                var modal = $(this);
+                modal.find(".modal-title").text("Confirm delete all tasks");
+            });
+            // delete all tasks function
+            deleteAllBtnConfirm.onclick = () => {
+                deleteAllTasktoServer.action = "/dashboard/deleteAll?_method=DELETE";
+                console.log(deleteAllTasktoServer.action);
+                deleteAllTasktoServer.submit();
+                $("#delete_all_task").modal("hide");
+            };
+
+            // // onkeyup event
+            inputBox.onkeyup = () => {
+                let userEnteredValue = inputBox.value; //getting user entered value
+                if (userEnteredValue.trim() != 0) {
+                    //if the user value isn't only spaces
+                    addBtn.classList.add("active"); //active the add button
+                    if (event.keyCode == 13) {
+                        //if the user pressed enter
+                        addBtn.click(); //click the add button
+                    }
+                } else {
+                    addBtn.classList.remove("active"); //unactive the add button
+                }
+            };
+
+            // delete task function
+            function deleteTask(index) {
+                // deleteTasktoServer.action = '/dashboard/delete/' + index + '?_method=DELETE';
+                // deleteTasktoServer.submit();
+                setTaskCompletedtoServer.action =
+                    "/dashboard/complete/" + index + "?_method=PUT";
+                setTaskCompletedtoServer.submit();
+            }
+        </script>
+    </body>
+
+    </html>

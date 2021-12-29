@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Todo Authentication</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <!-- load bootstrap css -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <!-- load fontawesome -->
+    <link rel = "icon" href = 
+  "../img/tasksd-todo-listd-task-listd-reminder_icon (1).png" 
+          type = "image/x-icon">
+    <style>
+        body {
+            background-image: url(../img/photo_83099_20161120.jpg);
+            background-size: cover;
+            padding-top: 80px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .signup {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="col-xs-6 signup">
+
+            <h1><span class="fa fa-sign-in"></span> Signup</h1>
+
+            <!-- show any messages that come back with authentication -->
+            <% if (message.length> 0) { %>
+                <div class="alert alert-danger">
+                    <%= message %>
+                </div>
+                <% } %>
+
+                    <!-- LOGIN FORM -->
+                    <form action="/signup" method="post">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" class="form-control" name="email" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="Password">
+                        </div>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" class="form-control" name="fullname" placeholder="Fullname">
+                        </div>
+
+                        <button type="submit" class="btn btn-warning btn-lg">Signup</button>
+                    </form>
+
+                    <hr>
+
+                    <p>Already have an account? <a href="/login">Login</a></p>
+                    <p>Or go <a href="/">home</a>.</p>
+
+        </div>
+
+    </div>
+</body>
+
+</html>
